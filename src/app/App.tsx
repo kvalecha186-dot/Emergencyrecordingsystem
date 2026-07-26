@@ -941,20 +941,22 @@ function HowItWorksSection() {
   ];
 
   // Step card — glassmorphism, circular icon, step badge
-  function StepCard({ step, align }: { step: typeof steps[0]; align: "left" | "right" }) {
+  function StepCard({ step, align, hideBadge }: { step: typeof steps[0]; align: "left" | "right"; hideBadge?: boolean }) {
     return (
       <div className="relative group cursor-default">
         {/* Step badge */}
-        <div
-          className="absolute -top-3 z-20 flex items-center justify-center w-7 h-7 rounded-full text-[10px] font-bold text-white"
-          style={{
-            [align === "left" ? "right" : "left"]: -10,
-            background: "linear-gradient(135deg,#ff1744,#ff4d6d)",
-            boxShadow: "0 0 12px rgba(255,23,68,0.6)",
-          }}
-        >
-          {parseInt(step.num)}
-        </div>
+        {!hideBadge && (
+          <div
+            className="absolute -top-3 z-20 flex items-center justify-center w-7 h-7 rounded-full text-[10px] font-bold text-white"
+            style={{
+              [align === "left" ? "right" : "left"]: -10,
+              background: "linear-gradient(135deg,#ff1744,#ff4d6d)",
+              boxShadow: "0 0 12px rgba(255,23,68,0.6)",
+            }}
+          >
+            {parseInt(step.num)}
+          </div>
+        )}
 
         <motion.div
           whileHover={{ y: -6, scale: 1.025 }}
@@ -1136,10 +1138,12 @@ function HowItWorksSection() {
               transition={{ duration: 0.55, delay: i * 0.09, ease: [0.16, 1, 0.3, 1] }}
               className="relative mb-7"
             >
-              {/* Dot on the line */}
-              <div className="absolute -left-8 top-8 w-3 h-3 rounded-full z-10"
-                style={{ background: "#ff1744", boxShadow: "0 0 8px rgba(255,23,68,0.8)", transform: "translateX(0.5px)" }} />
-              <StepCard step={step} align="right" />
+              {/* Numbered dot on the line */}
+              <div className="absolute -left-8 top-6 w-6 h-6 rounded-full z-10 flex items-center justify-center text-[10px] font-bold text-white"
+                style={{ background: "linear-gradient(135deg,#ff1744,#ff4d6d)", boxShadow: "0 0 10px rgba(255,23,68,0.8)" }}>
+                {parseInt(step.num)}
+              </div>
+              <StepCard step={step} align="right" hideBadge />
             </motion.div>
           ))}
         </div>
