@@ -344,7 +344,7 @@ function HeroSection() {
   ];
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-0 lg:pt-24 pb-16">
+    <section id="home" className="relative min-h-screen flex items-start lg:items-center overflow-hidden pt-8 lg:pt-24 pb-16">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 opacity-[0.033]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.2) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.2) 1px,transparent 1px)", backgroundSize: "72px 72px" }} />
         <div className="absolute rounded-full blur-3xl" style={{ top: "0%", left: "-5%", width: 620, height: 620, background: "radial-gradient(circle,rgba(255,23,68,0.14),transparent 70%)" }} />
