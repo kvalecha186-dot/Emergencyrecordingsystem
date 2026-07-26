@@ -39,6 +39,13 @@ const gradientText: React.CSSProperties = {
   backgroundClip: "text",
 };
 
+// ── Support contact config — swap this for a real inbox once one exists ────────
+const SUPPORT_EMAIL = "ers.iuxoa@gmail.com";
+const SUPPORT_BUSINESS_HOURS = "Mon–Fri, 9:00 AM – 6:00 PM IST";
+const SUPPORT_LOCATION = "Remote-first · India";
+const SUPPORT_RESPONSE_TIME = "Within 24 hours";
+
+
 const inViewFade = {
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 } as { opacity: number; y: number },
@@ -1664,11 +1671,275 @@ function CTASection() {
   );
 }
 
+// ── Contact Modal ─────────────────────────────────────────────────────────────
+function ContactModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  useEffect(() => {
+    if (!open) return;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+  }, [open, onClose]);
+
+  const rows = [
+    { icon: <Mail className="w-4 h-4" />, label: "Support Email", value: SUPPORT_EMAIL, href: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("ERS Support Request")}` },
+    { icon: <Clock className="w-4 h-4" />, label: "Business Hours", value: SUPPORT_BUSINESS_HOURS },
+    { icon: <MapPin className="w-4 h-4" />, label: "Location", value: SUPPORT_LOCATION },
+    { icon: <History className="w-4 h-4" />, label: "Response Time", value: SUPPORT_RESPONSE_TIME },
+  ];
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[70] flex items-center justify-center p-5"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}
+          style={{ background: "rgba(4,4,10,0.7)", backdropFilter: "blur(6px)" }}
+          onClick={onClose}
+          role="dialog" aria-modal="true" aria-labelledby="contact-modal-title"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 18, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.97 }}
+            transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+            className="relative w-full max-w-sm rounded-2xl p-6"
+            style={{ ...glass, border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 20px 60px rgba(0,0,0,0.55)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={onClose} aria-label="Close contact dialog"
+              className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:text-white transition-colors"
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: "linear-gradient(135deg,#ff1744,#ff4d6d)", ...redGlow }}>
+              <Mail className="w-5 h-5 text-white" />
+            </div>
+            <h3 id="contact-modal-title" className="font-display font-bold text-white mb-1.5" style={{ fontSize: 20 }}>Get in Touch</h3>
+            <p className="text-sm text-gray-500 mb-6">We're here to help — reach out anytime.</p>
+
+            <div className="space-y-4 mb-6">
+              {rows.map((r) => (
+                <div key={r.label} className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(255,23,68,0.1)", color: "#ff4d6d" }}>
+                    {r.icon}
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-gray-600 uppercase tracking-wide">{r.label}</p>
+                    {r.href ? (
+                      <a href={r.href} className="text-sm text-white hover:text-[#ff4d6d] transition-colors duration-200">{r.value}</a>
+                    ) : (
+                      <p className="text-sm text-gray-300">{r.value}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <a
+              href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("ERS Support Request")}`}
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white font-semibold text-sm transition-transform duration-200 hover:scale-[1.02]"
+              style={{ background: "linear-gradient(135deg,#ff1744,#e8102f)", boxShadow: "0 8px 24px rgba(255,23,68,0.35)" }}
+            >
+              <Mail className="w-4 h-4" /> Email Us
+            </a>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ── Bug Report Modal ─────────────────────────────────────────────────────────
+function BugReportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [form, setForm] = useState({ name: "", email: "", device: "", androidVersion: "", description: "" });
+  const [fileName, setFileName] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!open) return;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+  }, [open, onClose]);
+
+  useEffect(() => {
+    if (!open) { setStatus("idle"); setError(""); setForm({ name: "", email: "", device: "", androidVersion: "", description: "" }); setFileName(""); }
+  }, [open]);
+
+  const field = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.email.trim() || !form.description.trim()) {
+      setError("Please fill in your name, email, and a description of the bug.");
+      return;
+    }
+    setError("");
+    setStatus("sending");
+
+    const body = [
+      `Name: ${form.name}`,
+      `Email: ${form.email}`,
+      `Device Model: ${form.device || "—"}`,
+      `Android Version: ${form.androidVersion || "—"}`,
+      fileName ? `Screenshot: ${fileName} (please attach manually — it can't be auto-attached from the browser)` : "",
+      "",
+      "Bug Description:",
+      form.description,
+    ].filter(Boolean).join("\n");
+
+    const mailto = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("ERS Bug Report")}&body=${encodeURIComponent(body)}`;
+
+    // Give the "sending" state a brief, honest beat before handing off to the mail client.
+    window.setTimeout(() => {
+      window.location.href = mailto;
+      setStatus("sent");
+    }, 500);
+  };
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[70] flex items-center justify-center p-5"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}
+          style={{ background: "rgba(4,4,10,0.7)", backdropFilter: "blur(6px)" }}
+          onClick={onClose}
+          role="dialog" aria-modal="true" aria-labelledby="bug-modal-title"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 18, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.97 }}
+            transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+            className="relative w-full max-w-md rounded-2xl p-6 max-h-[88vh] overflow-y-auto"
+            style={{ ...glass, border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 20px 60px rgba(0,0,0,0.55)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={onClose} aria-label="Close bug report dialog"
+              className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:text-white transition-colors"
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {status === "sent" ? (
+              <div className="flex flex-col items-center text-center py-6">
+                <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ background: "rgba(34,197,94,0.14)", border: "1px solid rgba(34,197,94,0.35)" }}>
+                  <Check className="w-6 h-6" style={{ color: "#4ade80" }} />
+                </motion.div>
+                <h3 className="font-display font-bold text-white mb-2" style={{ fontSize: 18 }}>Almost there</h3>
+                <p className="text-sm text-gray-500 max-w-[30ch] mb-6">Your email app should now be open with the report pre-filled — just hit send. {fileName && "Don't forget to attach your screenshot."}</p>
+                <button onClick={onClose} className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white" style={{ background: "linear-gradient(135deg,#ff1744,#e8102f)" }}>Done</button>
+              </div>
+            ) : (
+              <>
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: "linear-gradient(135deg,#ff1744,#ff4d6d)", ...redGlow }}>
+                  <AlertCircle className="w-5 h-5 text-white" />
+                </div>
+                <h3 id="bug-modal-title" className="font-display font-bold text-white mb-1.5" style={{ fontSize: 20 }}>Report a Bug</h3>
+                <p className="text-sm text-gray-500 mb-6">Tell us what went wrong — this opens a pre-filled email to our support team.</p>
+
+                <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                  <div>
+                    <label htmlFor="bug-name" className="block text-[11px] text-gray-600 uppercase tracking-wide mb-1.5">Name</label>
+                    <input id="bug-name" type="text" value={form.name} onChange={field("name")} required
+                      className="w-full rounded-lg px-3.5 py-2.5 text-sm text-white outline-none transition-colors duration-200 focus:border-[#ff1744]/50"
+                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }} placeholder="Your name" />
+                  </div>
+                  <div>
+                    <label htmlFor="bug-email" className="block text-[11px] text-gray-600 uppercase tracking-wide mb-1.5">Email</label>
+                    <input id="bug-email" type="email" value={form.email} onChange={field("email")} required
+                      className="w-full rounded-lg px-3.5 py-2.5 text-sm text-white outline-none transition-colors duration-200 focus:border-[#ff1744]/50"
+                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }} placeholder="you@example.com" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label htmlFor="bug-device" className="block text-[11px] text-gray-600 uppercase tracking-wide mb-1.5">Device Model</label>
+                      <input id="bug-device" type="text" value={form.device} onChange={field("device")}
+                        className="w-full rounded-lg px-3.5 py-2.5 text-sm text-white outline-none transition-colors duration-200 focus:border-[#ff1744]/50"
+                        style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }} placeholder="e.g. Pixel 8" />
+                    </div>
+                    <div>
+                      <label htmlFor="bug-android" className="block text-[11px] text-gray-600 uppercase tracking-wide mb-1.5">Android Version</label>
+                      <input id="bug-android" type="text" value={form.androidVersion} onChange={field("androidVersion")}
+                        className="w-full rounded-lg px-3.5 py-2.5 text-sm text-white outline-none transition-colors duration-200 focus:border-[#ff1744]/50"
+                        style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }} placeholder="e.g. 14" />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="bug-desc" className="block text-[11px] text-gray-600 uppercase tracking-wide mb-1.5">Bug Description</label>
+                    <textarea id="bug-desc" value={form.description} onChange={field("description")} required rows={4}
+                      className="w-full rounded-lg px-3.5 py-2.5 text-sm text-white outline-none resize-none transition-colors duration-200 focus:border-[#ff1744]/50"
+                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }} placeholder="What happened? What did you expect instead?" />
+                  </div>
+                  <div>
+                    <label htmlFor="bug-file" className="block text-[11px] text-gray-600 uppercase tracking-wide mb-1.5">Screenshot (optional)</label>
+                    <label htmlFor="bug-file"
+                      className="flex items-center gap-2 w-full rounded-lg px-3.5 py-2.5 text-sm cursor-pointer transition-colors duration-200 hover:border-[#ff1744]/40"
+                      style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.16)", color: fileName ? "#fff" : "#6b7280" }}>
+                      <FileCheck className="w-4 h-4 flex-shrink-0" style={{ color: "#ff4d6d" }} />
+                      {fileName || "Choose a file…"}
+                    </label>
+                    <input id="bug-file" type="file" accept="image/*" className="sr-only"
+                      onChange={(e) => setFileName(e.target.files?.[0]?.name || "")} />
+                  </div>
+
+                  {error && <p className="text-xs" style={{ color: "#ff6b8a" }}>{error}</p>}
+
+                  <motion.button
+                    type="submit" disabled={status === "sending"}
+                    whileHover={status === "idle" ? { scale: 1.02 } : {}} whileTap={status === "idle" ? { scale: 0.98 } : {}}
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white font-semibold text-sm disabled:opacity-70"
+                    style={{ background: "linear-gradient(135deg,#ff1744,#e8102f)", boxShadow: "0 8px 24px rgba(255,23,68,0.35)" }}
+                  >
+                    {status === "sending" ? (
+                      <>
+                        <motion.span className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white inline-block"
+                          animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
+                        Preparing email…
+                      </>
+                    ) : "Submit Report"}
+                  </motion.button>
+                </form>
+              </>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 // ── Footer ────────────────────────────────────────────────────────────────────
 function Footer() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const onHome = location.pathname === "/";
+  const [contactOpen, setContactOpen] = useState(false);
+  const [bugOpen, setBugOpen] = useState(false);
+
   const legalLinks: Record<string, string> = { "Privacy Policy": "/privacy", "Terms & Conditions": "/terms" };
   const productLinks = ["Features", "How It Works", "App Screens", "Download"];
-  const supportLinks = ["FAQ", "Contact", "Report a Bug"];
+
+  // Shared by the Globe icon and the footer's "FAQ" link — scrolls smoothly if
+  // already on the homepage, otherwise navigates home first and hands the target
+  // section off via sessionStorage (same pattern NavBar already uses).
+  const goToSection = (id: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!onHome) {
+      sessionStorage.setItem("ers-scroll-target", id);
+      navigate("/");
+      return;
+    }
+    smoothScrollTo(id, 550);
+  };
+
   return (
     <footer className="py-16 px-6 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
       <div className="ers-container">
@@ -1680,13 +1951,27 @@ function Footer() {
             </Link>
             <p className="text-sm text-gray-700 leading-relaxed mb-5 max-w-[190px]">Emergency Recording System. Your protection, activated instantly.</p>
             <div className="flex gap-2">
-              {[Globe, Mail].map((Icon, i) => (<button key={i} className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-700 hover:text-white transition-colors" style={glass}><Icon className="w-3.5 h-3.5" /></button>))}
+              <button
+                type="button" onClick={goToSection("home")} aria-label="Go to homepage"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-700 hover:text-white transition-colors duration-200"
+                style={glass}
+              >
+                <Globe className="w-3.5 h-3.5" />
+              </button>
+              <a
+                href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("ERS Support Request")}`}
+                aria-label="Email ERS support"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-700 hover:text-white transition-colors duration-200"
+                style={glass}
+              >
+                <Mail className="w-3.5 h-3.5" />
+              </a>
             </div>
           </div>
           {/* Product */}
           <div>
             <h4 className="font-display text-sm font-bold text-white mb-4 tracking-wide">Product</h4>
-            <ul className="space-y-2.5">{productLinks.map((item) => (<li key={item}><a href={`#${item.toLowerCase().replace(/ /g, "-")}`} className="text-sm text-gray-700 hover:text-gray-300 transition-colors duration-200">{item}</a></li>))}</ul>
+            <ul className="space-y-2.5">{productLinks.map((item) => (<li key={item}><a href={`#${item.toLowerCase().replace(/ /g, "-")}`} onClick={goToSection(item.toLowerCase().replace(/ /g, "-"))} className="text-sm text-gray-700 hover:text-gray-300 transition-colors duration-200">{item}</a></li>))}</ul>
           </div>
           {/* Legal — uses React Router Link */}
           <div>
@@ -1705,7 +1990,21 @@ function Footer() {
           {/* Support */}
           <div>
             <h4 className="font-display text-sm font-bold text-white mb-4 tracking-wide">Support</h4>
-            <ul className="space-y-2.5">{supportLinks.map((item) => (<li key={item}><a href="#faq" className="text-sm text-gray-700 hover:text-gray-300 transition-colors duration-200">{item}</a></li>))}</ul>
+            <ul className="space-y-2.5">
+              <li><a href="#faq" onClick={goToSection("faq")} className="text-sm text-gray-700 hover:text-gray-300 transition-colors duration-200">FAQ</a></li>
+              <li>
+                <button type="button" onClick={() => setContactOpen(true)}
+                  className="text-sm text-gray-700 hover:text-gray-300 transition-colors duration-200 text-left">
+                  Contact
+                </button>
+              </li>
+              <li>
+                <button type="button" onClick={() => setBugOpen(true)}
+                  className="text-sm text-gray-700 hover:text-gray-300 transition-colors duration-200 text-left">
+                  Report a Bug
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
         <div
@@ -1720,9 +2019,13 @@ function Footer() {
           <p className="text-xs text-gray-800 text-center md:text-right md:justify-self-end">Version 1.0.0 · Android</p>
         </div>
       </div>
+
+      <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
+      <BugReportModal open={bugOpen} onClose={() => setBugOpen(false)} />
     </footer>
   );
 }
+
 
 // ── Home Page ─────────────────────────────────────────────────────────────────
 function HomePage() {
