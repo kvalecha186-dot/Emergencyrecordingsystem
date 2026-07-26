@@ -292,7 +292,7 @@ function NavBar() {
               className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg,#ff1744,#ff4d6d)", ...redGlow }}>
               <Shield className="w-4 h-4 text-white" />
             </motion.div>
-            <span className="font-display text-lg font-bold text-white tracking-widest hidden sm:inline">ERS</span>
+            <span className="font-display text-lg font-bold text-white tracking-widest inline">ERS</span>
           </a>
 
           {/* Center nav — truly centered on the viewport via the middle grid column, not just
@@ -312,7 +312,7 @@ function NavBar() {
               className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg,#ff1744,#ff4d6d)", ...redGlow }}>
               <Shield className="w-4 h-4 text-white" />
             </motion.div>
-            <span className="font-display text-lg font-bold text-white tracking-widest hidden sm:inline">ERS</span>
+            <span className="font-display text-lg font-bold text-white tracking-widest inline">ERS</span>
           </a>
 
           <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.94 }}
