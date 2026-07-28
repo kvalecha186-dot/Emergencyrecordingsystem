@@ -321,7 +321,7 @@ function NavBar() {
             </motion.div>
             <span className="font-display text-lg font-bold text-white tracking-widest inline">ERS</span>
           </a>
-          href="https://github.com/kvalecha186-dot/ers-app/releases/download/v1.0/app-debug.apk"
+          <a href="https://github.com/kvalecha186-dot/ers-app/releases/download/v1.0/app-debug.apk"
             download
             className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-white"
             style={{ background: "linear-gradient(135deg,#ff1744,#ff4d6d)" }}
