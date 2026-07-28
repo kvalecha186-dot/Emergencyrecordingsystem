@@ -1578,7 +1578,9 @@ function CTASection() {
 
         {/* Primary CTA button with shine sweep */}
         <motion.div variants={staggerItem} className="flex flex-col items-center gap-4">
-          <motion.button
+          <motion.a
+            href="https://github.com/kvalecha186-dot/ers-app/releases/download/v1.0/app-debug.apk"
+            download
             whileHover={{ scale: 1.045, y: -3, boxShadow: "0 0 50px rgba(255,23,68,0.6), 0 16px 36px rgba(0,0,0,0.45)" }}
             whileTap={{ scale: 0.97 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
@@ -1591,7 +1593,7 @@ function CTASection() {
               transition={{ duration: 3, repeat: Infinity, repeatDelay: 2.2, ease: "easeInOut" }} />
             <Download className="w-5 h-5 relative z-10" />
             <span className="relative z-10">Download ERS for Android</span>
-          </motion.button>
+          </motion.a>
 
           <p className="text-[11.5px] text-gray-600 tracking-wide">Free · No Ads · Instant Setup</p>
 
