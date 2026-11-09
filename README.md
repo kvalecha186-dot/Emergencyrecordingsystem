@@ -35,22 +35,22 @@ The site uses a dark visual style with ERS red accents, responsive layouts, anim
 
 ### Setup
 
-\`\`\`bash
+```bash
 git clone https://github.com/kvalecha186-dot/Emergencyrecordingsystem.git
 cd Emergencyrecordingsystem
 npm install
 npm run dev
-\`\`\`
+```
 
 Create a production build:
 
-\`\`\`bash
+```bash
 npm run build
-\`\`\`
+```
 
 ## Repository structure
 
-\`\`\`text
+```text
 .
 ├── src/
 │   ├── app/
@@ -64,7 +64,7 @@ npm run build
 ├── index.html
 ├── package.json
 └── vite.config.ts
-\`\`\`
+```
 
 ## Important note about feature descriptions
 
