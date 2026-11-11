@@ -1,10 +1,47 @@
-# ERS — Emergency Recording System Website
+<div align="center">
 
+# 🚨 ERS — Emergency Recording System
+### *The product website for the ERS Android safety app*
+
+[![Live Site](https://img.shields.io/badge/Live_Site-Vercel-black?style=for-the-badge&logo=vercel)](https://emergencyrecordingsystem.vercel.app)
+[![React](https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+
+[Live Site](https://emergencyrecordingsystem.vercel.app) · [Screenshots](#-screenshots) · [Run locally](#run-locally) · [Android App](https://github.com/kvalecha186-dot/ers-app)
+
+<br/>
+
+<img src="docs/screenshots/hero.webp" alt="ERS website hero: Your Emergency. Recorded." width="900"/>
+
+</div>
+
+---
 This repository contains the **ERS product website** — the public-facing website I built to explain the Emergency Recording System Android app and help people understand what it does.
 
 ERS is designed for situations where someone may not have time to unlock their phone, open an app and manually start an emergency process. The idea is to make it possible to trigger an emergency recording workflow quickly, while also notifying trusted contacts.
 
 This repository is the marketing and product-information website. It is **not the Android recording application itself**. The Android app is maintained in the separate [ers-app repository](https://github.com/kvalecha186-dot/ers-app).
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/features.webp" alt="ERS core capabilities"/><br/><sub><b>Core capabilities</b> — seven features, one hardware trigger</sub></td>
+    <td width="50%"><img src="docs/screenshots/how-it-works.webp" alt="How ERS works"/><br/><sub><b>How it works</b> — six steps from trigger to alert</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/app-screens.webp" alt="ERS app screens showcase"/><br/><sub><b>App screens</b> — interactive showcase of the Android UI</sub></td>
+    <td width="50%"><img src="docs/screenshots/app-recording.webp" alt="ERS recording screen"/><br/><sub><b>Recording screen</b> — live timer and delivery confirmation</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/use-cases.webp" alt="ERS use cases"/><br/><sub><b>Use cases</b> — travel, women's safety, students and more</sub></td>
+    <td width="50%"><img src="docs/screenshots/comparison.webp" alt="Why ERS is different"/><br/><sub><b>Comparison</b> — why ERS differs from typical safety apps</sub></td>
+  </tr>
+</table>
+
+> Screenshots are captured from the running website. The phone screens shown are the website's own product mockups of the Android app.
 
 ## What the website includes
 
